@@ -1,4 +1,3 @@
-import { hash } from 'bcryptjs';
 import { Request, Response } from 'express';
 import CreateUserService from '../services/CreateUserService';
 import ListUsersService from '../services/ListUsersService';
@@ -9,7 +8,11 @@ class UsersController {
 
     const users = await listUsers.execute();
 
-    return response.json(users);
+    const usersListWithoutPassword = users.map(user => {
+      return { ...user, password: undefined };
+    });
+
+    return response.json(usersListWithoutPassword);
   }
 
   public async create(request: Request, response: Response): Promise<Response> {
@@ -17,15 +20,13 @@ class UsersController {
 
     const createUser = new CreateUserService();
 
-    const hashedPassword = await hash(password, 8);
-
     const user = await createUser.execute({
       name,
       email,
-      password: hashedPassword
+      password
     });
 
-    return response.status(201).json(user);
+    return response.status(201).json({ ...user, password: undefined });
   }
 }
 

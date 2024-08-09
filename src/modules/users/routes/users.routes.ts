@@ -1,11 +1,18 @@
+import uploadConfig from '@config/upload';
+import isAuthenticated from '@shared/http/middlewares/isAuthenticated';
 import { celebrate, Joi, Segments } from 'celebrate';
 import { Router } from 'express';
+import multer from 'multer';
+import UserAvatarController from '../controllers/UserAvatarController';
 import UsersController from '../controllers/UsersController';
 
 const usersRouter = Router();
 const usersController = new UsersController();
+const userAvatarController = new UserAvatarController();
 
-usersRouter.get('/', usersController.index);
+const upload = multer(uploadConfig);
+
+usersRouter.get('/', isAuthenticated, usersController.index);
 
 usersRouter.post(
   '/',
@@ -17,6 +24,13 @@ usersRouter.post(
     }
   }),
   usersController.create
+);
+
+usersRouter.patch(
+  '/avatar',
+  isAuthenticated,
+  upload.single('avatar'),
+  userAvatarController.update
 );
 
 export default usersRouter;
