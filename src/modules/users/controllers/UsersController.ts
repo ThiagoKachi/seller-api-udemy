@@ -1,3 +1,4 @@
+import { instanceToInstance } from 'class-transformer';
 import { Request, Response } from 'express';
 import CreateUserService from '../services/CreateUserService';
 import ListUsersService from '../services/ListUsersService';
@@ -8,11 +9,7 @@ class UsersController {
 
     const users = await listUsers.execute();
 
-    const usersListWithoutPassword = users.map(user => {
-      return { ...user, password: undefined };
-    });
-
-    return response.json(usersListWithoutPassword);
+    return response.json(instanceToInstance(users));
   }
 
   public async create(request: Request, response: Response): Promise<Response> {
@@ -26,7 +23,7 @@ class UsersController {
       password
     });
 
-    return response.status(201).json({ ...user, password: undefined });
+    return response.status(201).json(instanceToInstance(user));
   }
 }
 
