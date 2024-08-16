@@ -21,4 +21,4 @@ jobs:
 
     - name: Deploy to DigitalOcean
       run: |
-        ssh deploy@142.93.187.179 "cd /home/deploy && git pull origin main && npm install && pm2 restart all"
+        ssh root@142.93.187.179 "cd /home/deploy && git pull origin main && npm install && pm2 restart all"
